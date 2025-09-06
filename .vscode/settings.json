@@ -1,0 +1,12 @@
+{
+    "C_Cpp.errorSquiggles": "disabled",
+    "files.associations": {
+        "vector": "cpp",
+        "cwchar": "cpp",
+        "ios": "cpp",
+        "xiosbase": "cpp",
+        "chrono": "cpp",
+        "system_error": "cpp",
+        "xlocale": "cpp"
+    }
+}
