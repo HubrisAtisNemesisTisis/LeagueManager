@@ -1,3 +1,4 @@
 # ninja log v7
-25	3628	1757172101192079500	CMakeFiles/LeagueofLegendsManager.dir/check_if_client_open.cpp.o	a524e2272db13f99
-3639	3870	1757172104806440500	/c/Users/shant/Videos/LeagueRepo/LeagueofLegendsManager.exe	eb732e371e0bed47
+24	3468	1757571355396774600	CMakeFiles/LeagueofLegendsManager.dir/src/main.cpp.o	16cbfba6e0ef890f
+55	6590	1757571355427692100	CMakeFiles/LeagueofLegendsManager.dir/src/loadSettings.cpp.o	c745d553347f9ada
+6598	6968	1757571361970586300	/c/Users/shant/Videos/LeagueRepo/LeagueofLegendsManager.exe	1f2340ebc29ccc82

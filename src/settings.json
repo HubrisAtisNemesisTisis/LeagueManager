@@ -1,0 +1,4 @@
+{
+    "EXE_PATH": "C:\\Riot Games\\Riot Client\\RiotClientServices.exe",
+    "EXE_ARGS": "--launch-product=league_of_legends --launch-patchline=live"
+}

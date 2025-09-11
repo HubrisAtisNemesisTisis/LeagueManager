@@ -44,12 +44,21 @@ cmake_ninja_workdir = /c/Users/shant/Videos/LeagueRepo/build/
 
 build cmake_object_order_depends_target_LeagueofLegendsManager: phony || .
 
-build CMakeFiles/LeagueofLegendsManager.dir/check_if_client_open.cpp.o: CXX_COMPILER__LeagueofLegendsManager_unscanned_ /c/Users/shant/Videos/LeagueRepo/check_if_client_open.cpp || cmake_object_order_depends_target_LeagueofLegendsManager
-  DEP_FILE = CMakeFiles/LeagueofLegendsManager.dir/check_if_client_open.cpp.o.d
+build CMakeFiles/LeagueofLegendsManager.dir/src/main.cpp.o: CXX_COMPILER__LeagueofLegendsManager_unscanned_ /c/Users/shant/Videos/LeagueRepo/src/main.cpp || cmake_object_order_depends_target_LeagueofLegendsManager
+  DEP_FILE = CMakeFiles/LeagueofLegendsManager.dir/src/main.cpp.o.d
   FLAGS = -Wall -Wextra
   INCLUDES = -I/ucrt64/include
   OBJECT_DIR = CMakeFiles/LeagueofLegendsManager.dir
-  OBJECT_FILE_DIR = CMakeFiles/LeagueofLegendsManager.dir
+  OBJECT_FILE_DIR = CMakeFiles/LeagueofLegendsManager.dir/src
+  TARGET_COMPILE_PDB = CMakeFiles/LeagueofLegendsManager.dir/
+  TARGET_PDB = /c/Users/shant/Videos/LeagueRepo/LeagueofLegendsManager.pdb
+
+build CMakeFiles/LeagueofLegendsManager.dir/src/loadSettings.cpp.o: CXX_COMPILER__LeagueofLegendsManager_unscanned_ /c/Users/shant/Videos/LeagueRepo/src/loadSettings.cpp || cmake_object_order_depends_target_LeagueofLegendsManager
+  DEP_FILE = CMakeFiles/LeagueofLegendsManager.dir/src/loadSettings.cpp.o.d
+  FLAGS = -Wall -Wextra
+  INCLUDES = -I/ucrt64/include
+  OBJECT_DIR = CMakeFiles/LeagueofLegendsManager.dir
+  OBJECT_FILE_DIR = CMakeFiles/LeagueofLegendsManager.dir/src
   TARGET_COMPILE_PDB = CMakeFiles/LeagueofLegendsManager.dir/
   TARGET_PDB = /c/Users/shant/Videos/LeagueRepo/LeagueofLegendsManager.pdb
 
@@ -61,10 +70,10 @@ build CMakeFiles/LeagueofLegendsManager.dir/check_if_client_open.cpp.o: CXX_COMP
 #############################################
 # Link the executable /c/Users/shant/Videos/LeagueRepo/LeagueofLegendsManager.exe
 
-build /c/Users/shant/Videos/LeagueRepo/LeagueofLegendsManager.exe: CXX_EXECUTABLE_LINKER__LeagueofLegendsManager_ CMakeFiles/LeagueofLegendsManager.dir/check_if_client_open.cpp.o
+build /c/Users/shant/Videos/LeagueRepo/LeagueofLegendsManager.exe: CXX_EXECUTABLE_LINKER__LeagueofLegendsManager_ CMakeFiles/LeagueofLegendsManager.dir/src/main.cpp.o CMakeFiles/LeagueofLegendsManager.dir/src/loadSettings.cpp.o
   FLAGS = -Wall -Wextra
   LINK_FLAGS = -Wl,--enable-auto-import
-  LINK_LIBRARIES = -lsqlite3  -lsimdjson  -lole32  -loleaut32  -luiautomationcore
+  LINK_LIBRARIES = -lsodium  -lsqlite3  -lsimdjson  -lole32  -loleaut32  -luiautomationcore
   OBJECT_DIR = CMakeFiles/LeagueofLegendsManager.dir
   POST_BUILD = :
   PRE_LINK = :

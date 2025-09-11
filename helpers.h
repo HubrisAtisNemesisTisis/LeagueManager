@@ -228,21 +228,21 @@ static inline void waitUntilReadyAndLogin() {
     CoUninitialize();
 }
 
+static inline void bringWindowToForeground(HWND hwnd) {
+    if (!hwnd) {
+        ERROR_LOG("Invalid window handle provided to bringWindowToForeground.");
+        exit(EXIT_FAILURE);
+    }
+    INFO_LOG("Bringing window (Handle: %p) to foreground.", hwnd);
+    if (IsIconic(hwnd)) {
+        ShowWindow(hwnd, SW_RESTORE);
+    }
+    SetForegroundWindow(hwnd);
+}
 
 static inline void bringRiotClientToForeground() {
     // find riot client handle 
-    settings.riotClientHandle = FindWindowW(L"Chrome_WidgetWin_1", L"Riot Client");
-    if (!settings.riotClientHandle) {
-        ERROR_LOG("Failed to find Riot Client window.");
-        exit(EXIT_FAILURE);
-    } 
-    INFO_LOG("Riot Client window found (Handle: %p)", settings.riotClientHandle);
-
-    //Try to bring the window to the foreground
-    if (IsIconic(settings.riotClientHandle)) {
-        ShowWindow(settings.riotClientHandle, SW_RESTORE);
-    }
-    SetForegroundWindow(settings.riotClientHandle);
+    bringWindowToForeground(settings.riotClientHandle);
     waitUntilForegroundWindow(L"Riot Client");
     waitUntilReadyAndLogin();
 

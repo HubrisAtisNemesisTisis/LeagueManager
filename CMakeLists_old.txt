@@ -27,7 +27,7 @@ message(STATUS "SQLITE3 libraries: ${SODIUM_LIBRARIES}")
 
 set(UCRT64_INCLUDE_DIRS /ucrt64/include)
 
-add_executable(LeagueofLegendsManager src/main.cpp src/loadSettings.cpp)
+add_executable(LeagueofLegendsManager check_if_client_open.cpp)
 target_include_directories(LeagueofLegendsManager PRIVATE ${UCRT64_INCLUDE_DIRS})
 target_link_libraries(
     LeagueofLegendsManager PRIVATE

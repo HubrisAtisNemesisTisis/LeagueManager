@@ -32,7 +32,7 @@ enum ClientAction {
 struct Settings {
     wchar_t* EXE_PATH = NULL;
     wchar_t* EXE_ARGS = NULL;
-    DWORD leagueClient_PID = 0;
+    HWND leagueClientHandle = NULL;
     HWND riotClientHandle = NULL;
 } settings;
 
@@ -83,7 +83,12 @@ ClientAction checkRequiredClientAction() {
     }
     do {
         if (wcscmp(processEntry.szExeFile, L"LeagueClient.exe") == 0) {
-            settings.leagueClient_PID = processEntry.th32ProcessID;
+            settings.leagueClientHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pe.th32ProcessID);
+            if (!settings.leagueClientHandle) {
+                ERROR_LOG("Failed to open LeagueClient.exe process. Error Code: %lu", GetLastError());
+                CloseHandle(hSnapshot);
+                exit(EXIT_FAILURE);
+            }
             INFO_LOG("LeagueClient.exe is running with PID: %lu", settings.leagueClient_PID);
             CloseHandle(hSnapshot);
             return NONE;
@@ -108,14 +113,101 @@ void openLeagueClientAndLogin() {
     }
     INFO_LOG("Riot Client launched (PID %lu). Waiting...", processInfo.dwProcessId);
     waitUntilForegroundWindow(L"Riot Client");
-    Sleep(2000); // Additional wait to ensure the window is fully ready
     waitUntilReadyAndLogin();
 }
 #endif
 
+#define DB "RiotAccounts.db"
+static sqlite3* db = NULL;
+
+static void db_open() {
+    if (sqlite3_open(DB, &db) != SQLITE_OK) {
+        ERROR_LOG("Cannot open database: %s", sqlite3_errmsg(db));
+        sqlite3_close(db);
+        exit(EXIT_FAILURE);
+    }
+    const char *sqlCreateTableStr =
+    "CREATE TABLE IF NOT EXISTS ACCOUNTS("
+    "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
+    "USERNAME TEXT UNIQUE NOT NULL,"
+    "PASSWORD TEXT NOT NULL,"
+    "COMMENT TEXT"
+    ")";
+    char* errMsg = NULL;
+    if (sqlite3_exec(db, sqlCreateTableStr, NULL, NULL, &errMsg) != SQLITE_OK) {
+        ERROR_LOG("SQL error: %s", errMsg);
+        sqlite3_free(errMsg);
+        sqlite3_close(db);
+        exit(EXIT_FAILURE);
+    }
+}
+
+static void db_close() {
+    if (db) {
+        sqlite3_close(db);
+        db = NULL;
+    }
+}
+
+static void add_account(const char* username, const char* password, const char* comment) {
+    sqlite3_stmt* stmt = NULL;
+    const char* sqlInsertStr = "INSERT INTO ACCOUNTS (USERNAME, PASSWORD, COMMENT) VALUES (?, ?, ?)";
+    if (sqlite3_prepare_v2(db, sqlInsertStr, -1, &stmt, NULL) != SQLITE_OK) {
+        ERROR_LOG("Failed to prepare statement: %s", sqlite3_errmsg(db));
+        exit(EXIT_FAILURE);
+    }
+    if (sqlite3_bind_text(stmt, 1, username, -1, SQLITE_STATIC) != SQLITE_OK ||
+        sqlite3_bind_text(stmt, 2, password, -1, SQLITE_STATIC) != SQLITE_OK ||
+        sqlite3_bind_text(stmt, 3, comment, -1, SQLITE_STATIC) != SQLITE_OK) {
+        ERROR_LOG("Failed to bind parameters: %s", sqlite3_errmsg(db));
+        sqlite3_finalize(stmt);
+        exit(EXIT_FAILURE);
+    }
+    int rc = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    if (rc != SQLITE_DONE) {
+        ERROR_LOG("Failed to execute statement: %s", sqlite3_errmsg(db));
+        exit(EXIT_FAILURE);
+    }
+}
+
+static inline void flush_stdin(void){
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF) {}
+}
 
 int main() {
+
+    db_open();
     printf("Choice : 1)Add account 2)Remove account 3)Choose accounts\n");
+    int choice;
+    printf("Select (1-3): ");
+    if (scanf("%d", &choice) != 1) {        /* input was not a number */
+        puts("Invalid input");
+        return EXIT_FAILURE;
+    }
+    switch (choice) {
+        case 1:    
+            char username[256], password[256], comment[512];
+            printf("Enter username: ");
+            scanf("%255s", username);
+            printf("Enter password: ");
+            scanf("%255s", password);
+            flush_stdin();
+            printf("Enter comment (optional, press ENTER to skip): ");
+            if (fgets(comment, sizeof comment, stdin)) {
+                comment[strcspn(comment, "\r\n")] = '\0';
+            }
+            add_account(username, password, comment);
+            INFO_LOG("Account added: %s", username);
+            break;
+        case 2:  /* remove account*/  break;
+        case 3:  /* choose account*/  break;
+        case 4: /* edit account */  break;
+        default: puts("Choice must be 1, 2 or 3");  break;
+
+    }
+    
     load_settings();
     ClientAction action = checkRequiredClientAction();
 
@@ -147,6 +239,7 @@ int main() {
     // } else {
     //     INFO_LOG("No action required. Client is already running.");
     // }
+    db_close();
     free(settings.EXE_PATH);
     free(settings.EXE_ARGS);
     return 0;
